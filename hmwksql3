@@ -1,0 +1,129 @@
+1. List all customers who live in Texas (use JOINs) 
+A:jennifer davis, bryan hardison, kim cruz, ian still, richard mccrary
+
+SELECT address.district, customer.address_id, first_name, last_name
+FROM customer 
+JOIN address
+ON address.address_id = customer.address_id
+ORDER BY address.district DESC;
+
+
+2. Get all payments above $6.99 with the Customer’s full name 
+A:1406 
+
+SELECT payment.amount, customer.customer_id, first_name, last_name
+FROM customer 
+FULL JOIN payment
+ON payment.customer_id = customer.customer_id
+WHERE payment.amount > 6.99
+ORDER BY payment.amount DESC;
+
+3. Show all customer names who have made payments over $175 (use subqueries)  
+A:Eleanor Hunt, Karl Seal, Marion Snyder, Rhonda Kennedy, Clara Shaw, tommy collazo
+SELECT *
+FROM customer
+WHERE customer_id IN (
+	SELECT customer_id
+	FROM payment
+	GROUP BY customer_id
+	HAVING SUM(amount) > 175
+	ORDER BY SUM(amount) DESC
+);
+
+SELECT *
+FROM customer
+WHERE customer_id IN (
+	SELECT customer_id
+	FROM payment
+	GROUP BY customer_id
+	HAVING SUM(amount) > 175
+	ORDER BY SUM(amount) DESC
+)
+ORDER BY last_name
+;
+
+
+SELECT customer_id
+FROM payment
+GROUP BY customer_id
+HAVING SUM(amount) > 175
+ORDER BY SUM(amount) DESC;
+148, 526,178,137,144,459
+
+SELECT *
+FROM customer
+WHERE customer_id IN (148, 526, 178, 137, 144, 459);
+Eleanor Hunt, Karl Seal, Marion Snyder, Rhonda Kennedy, Clara Shaw, tommy collazo
+
+
+4. List all customers that live in Nepal (use the city table)
+A:customer_id 321
+
+SELECT customer.customer_id,address, city, district, country
+FROM customer
+JOIN address
+ON customer.address_id = address.address_id
+JOIN city
+ON city.city_id = address.city_id
+JOIN country
+ON country.country_id = city.country_id
+ORDER BY country DESC
+;
+
+
+5. Which staff member had the most transactions? 
+A:
+SELECT payment.payment_id, COUNT(staff.staff_id), first_name, last_name
+FROM staff
+JOIN payment
+ON staff.staff_id = payment.staff_id
+ORDER BY first_name;
+--------------------------------
+SELECT COUNT(payment_id)
+FROM payment
+JOIN staff
+ON staff.staff_id = payment.staff_id
+ORDER BY payment_id;
+
+--------------------------------
+SELECT COUNT(payment_id)
+FROM payment
+GROUP BY staff_id
+ORDER BY staff_id;
+--1 7292
+--2 7304
+SELECT *
+FROM staff;
+
+6. What film had the most actors in it? 
+A:
+
+SELECT film.film_id, COUNT(*)
+FROM film
+JOIN film_actor
+ON film_actor.film_id = film.film_id
+GROUP BY actor_id, film_id
+ORDER BY COUNT(*) DESC
+;
+
+
+7. Which actor has been in the least movies? 
+A:
+
+8. How many districts have more than 5 customers in it?
+A:
+SELECT address.district, customer.customer_id
+FROM customer 
+JOIN address
+ON address.address_id = customer.address_id
+WHERE address.district IN (
+	SELECT address.district
+	FROM address
+	GROUP BY address.district,customer.customer_id
+	--ORDER BY address.district DESC
+	HAVING COUNT(customer.customer_id)
+)
+;
+
+
+
